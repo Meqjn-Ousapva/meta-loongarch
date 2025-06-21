@@ -280,6 +280,17 @@ PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
 # this doesn't mean anything to you.
 CONF_VERSION = "2"
 
+GCCVERSION = "13.2"
+PREFERRED_VERSION_glibc = "2.38"
+PREFERRED_VERSION_glibc-mtrace = "2.38"
+PREFERRED_VERSION_glibc-scripts= "2.38"
+PREFERRED_VERSION_glibc-locale = "2.38"
+PREFERRED_VERSION_cross-localedef-native = "2.38"
+PREFERRED_VERSION_ldconfig-native = "2.12.1"
+PREFERRED_VERSION_binutils = "2.41"
+PREFERRED_VERSION_linux-libc-headers = "6.5"
+PREFERRED_VERSION_qemu-native = "8.1.4"
+
 MACHINE = "qemuloongarch64"
 #IMAGE_INSTALL:append = " edk2-loongarch"
 #IMAGE_INSTALL:append = " ldd elfutils"
