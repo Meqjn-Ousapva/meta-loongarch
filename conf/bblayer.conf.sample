@@ -1,0 +1,13 @@
+# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+POKY_BBLAYERS_CONF_VERSION = "2"
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+BBLAYERS ?= " \
+  /home/meqjn/yoctoproject/meta-loongarch-kirkstone \
+  /home/meqjn/yoctoproject/poky-kirkstone/meta \
+  /home/meqjn/yoctoproject/poky-kirkstone/meta-poky \
+  /home/meqjn/yoctoproject/poky-kirkstone/meta-yocto-bsp \
+  "
