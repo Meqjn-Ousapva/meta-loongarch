@@ -1,0 +1,13 @@
+Upstream-Status: Pending
+diff --git a/util/perl/OpenSSL/config.pm b/util/perl/OpenSSL/config.pm
+index 695d6ba..3573fed 100755
+--- a/util/perl/OpenSSL/config.pm
++++ b/util/perl/OpenSSL/config.pm
+@@ -721,6 +721,7 @@ EOF
+       ],
+       [ '.*86-.*-linux1',         { target => "linux-aout" } ],
+       [ 'riscv64-.*-linux.',      { target => "linux64-riscv64" } ],
++      [ 'loongarch64-.*-linux.',  { target => "linux64-loongarch64" } ],
+       [ '.*-.*-linux.',           { target => "linux-generic32" } ],
+       [ 'sun4[uv].*-.*-solaris2',
+         sub {

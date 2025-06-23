@@ -1,0 +1,29 @@
+From 2eb52cc0dd1ce02871d4f863649a8656831805c7 Mon Sep 17 00:00:00 2001
+From: hongrongxuan <hongrongxuan@huawei.com>
+Date: Tue, 25 Oct 2022 21:24:21 +0800
+Subject: [PATCH] add Wl,-z,noseparate-code for so
+binutils 2.31 add a separate-code(default)/noseparate-code link option to separate
+.rodata from .text segment. Cause this is a dubious feature that intends to
+reduce the number of ROP gadgets, and this will reduce batch program's
+performance, like unixbench shell program, it will reduce 8%~10%. So
+add 'Wl,-z,noseparate-code' to disable this feature.
+
+Refrences:
+https://sourceware.org/pipermail/binutils/2018-February/101950.html
+https://reviews.llvmm.org/D64903
+https://packagehub.suse.com/packages/binutils/2_37-1050100_7_34_1/
+---
+ sysdeps/x86_64/Makeconfig | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 sysdeps/x86_64/Makeconfig
+
+diff --git a/sysdeps/x86_64/Makeconfig b/sysdeps/x86_64/Makeconfig
+new file mode 100644
+index 00000000..5f544fd7
+--- /dev/null
++++ b/sysdeps/x86_64/Makeconfig
+@@ -0,0 +1 @@
++relro-LDFLAGS = -Wl,-z,relro -Wl,-z,noseparate-code
+--
+2.33.0
+
