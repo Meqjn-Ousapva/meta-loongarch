@@ -91,7 +91,7 @@ MACHINE ??= "qemux86-64"
 # Ultimately when creating custom policy, people will likely end up subclassing 
 # these defaults.
 #
-DISTRO ?= "poky"
+DISTRO ?= "oela"
 # As an example of a subclass there is a "bleeding" edge policy configuration
 # where many versions are set to the absolute latest code from the upstream 
 # source control systems. This is just mentioned here as an example, its not
@@ -280,14 +280,23 @@ PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
 # this doesn't mean anything to you.
 CONF_VERSION = "2"
 
-GCCVERSION = "13.2"
-PREFERRED_VERSION_glibc = "2.38"
-PREFERRED_VERSION_glibc-mtrace = "2.38"
-PREFERRED_VERSION_glibc-scripts= "2.38"
-PREFERRED_VERSION_glibc-locale = "2.38"
-PREFERRED_VERSION_cross-localedef-native = "2.38"
+#TCMODE = "external-openeuler"
+#INHERIT:remove = "uninative"
+#PATCHDEPENDENCY:remove = "patch-replacement-native:do_populate_sysroot"
+#OPENEULER_SP_DIR  = "/home/meqjn/openeulerproject"
+#OPENEULER_PREBUILT_TOOLS_ENABLE = "no"
+#OVERRIDES .= "${@['', ':openeuler-prebuilt']['${OPENEULER_PREBUILT_TOOLS_ENABLE}' == 'yes']}"
+#OPENEULER_NATIVESDK_SYSROOT = "/opt/buildtools/nativesdk/sysroots/x86_64-openeulersdk-linux"
+#EXTERNAL_TOOLCHAIN_GCC:loongarch64 = "/opt/openeuler-gcc-loongarch64"
+#EXTERNAL_TARGET_SYS:loongarch64 = "loongarch64-openeuler-linux-gnu"
+#EXTERNAL_TOOLCHAIN ?= "${EXTERNAL_TOOLCHAIN_GCC}"
+#require conf/distro/include/security_flags.inc
+#require conf/distro/include/security_flags_openeuler.inc
+#EXTERNAL_TOOLCHAIN_FEATURES_DEFAULT = "locale-utf8-is-default"
+#MANIFEST_DIR ?= "${OPENEULER_SP_DIR}/yocto-meta-openeuler/.oebuild/manifest.yaml"
+#MAPLIST_DIR ?= "${OPENEULER_SP_DIR}/yocto-meta-openeuler/.oebuild/maplist.yaml"
+
 PREFERRED_VERSION_ldconfig-native = "2.12.1"
-PREFERRED_VERSION_binutils = "2.41"
 PREFERRED_VERSION_linux-libc-headers = "6.5"
 PREFERRED_VERSION_qemu-native = "8.1.4"
 
