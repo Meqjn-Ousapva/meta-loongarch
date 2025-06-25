@@ -3,20 +3,9 @@ HOMEPAGE = "http://strace.io"
 DESCRIPTION = "strace is a diagnostic, debugging and instructional userspace utility for Linux. It is used to monitor and tamper with interactions between processes and the Linux kernel, which include system calls, signal deliveries, and changes of process state."
 SECTION = "console/utils"
 LICENSE = "LGPL-2.1-or-later & GPL-2.0-or-later"
-LIC_FILES_CHKSUM = "file://COPYING;md5=59a33f0a3e6122d67c0b3befccbdaa6b"
+LIC_FILES_CHKSUM = "file://COPYING;md5=1efaf30bb0084b4a17a6f55f9cbcd25b"
 
-SRC_URI = "https://strace.io/files/${PV}/strace-${PV}.tar.xz \
-           file://update-gawk-paths.patch \
-           file://Makefile-ptest.patch \
-           file://run-ptest \
-           file://ptest-spacesave.patch \
-           file://0001-strace-fix-reproducibilty-issues.patch \
-           file://skip-load.patch \
-           file://0001-configure-Use-autoconf-macro-to-detect-largefile-sup.patch \
-           file://0002-tests-Replace-off64_t-with-off_t.patch \
-           file://tests-fix-so_peerpidfd-test.patch \
-           "
-SRC_URI[sha256sum] = "dfb051702389e1979a151892b5901afc9e93bbc1c70d84c906ade3224ca91980"
+SRC_URI = "file://strace-${PV}.tar.xz"
 
 inherit autotools ptest
 
@@ -38,7 +27,7 @@ TESTDIR = "tests"
 PTEST_BUILD_HOST_PATTERN = "^(DEB_CHANGELOGTIME|RPM_CHANGELOGTIME|WARN_CFLAGS_FOR_BUILD|LDFLAGS_FOR_BUILD)"
 
 do_compile_ptest() {
-	oe_runmake -C ${TESTDIR} buildtest-TESTS
+	oe_runmake ${PARALLEL_MAKE} -C ${TESTDIR} buildtest-TESTS
 }
 
 do_install_ptest() {
