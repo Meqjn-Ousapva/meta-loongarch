@@ -1,0 +1,14 @@
+Upstream-Status: Pending
+diff --git a/src/privsep-linux.c b/src/privsep-linux.c
+index ee2e22d..ef54610 100644
+--- a/src/privsep-linux.c
++++ b/src/privsep-linux.c
+@@ -248,6 +248,8 @@ ps_root_sendnetlink(struct dhcpcd_ctx *ctx, int protocol, struct msghdr *msg)
+ #  endif
+ #elif defined(__xtensa__)
+ #  define SECCOMP_AUDIT_ARCH AUDIT_ARCH_XTENSA
++#elif defined(__loongarch__)
++#  define SECCOMP_AUDIT_ARCH AUDIT_ARCH_LOONGARCH64
+ #else
+ #  error "Platform does not support seccomp filter yet"
+ #endif
