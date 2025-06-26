@@ -280,7 +280,9 @@ PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
 # this doesn't mean anything to you.
 CONF_VERSION = "2"
 
-IMAGE_INSTALL:append = " edk2-loongarch"
+MACHINE = "qemuloongarch64"
+#IMAGE_INSTALL:append = " edk2-loongarch"
+#IMAGE_INSTALL:append = " ldd elfutils"
 KERNEL_IMAGETYPE:qemuloongarch64 = "vmlinux.efi"
 QB_DEFAULT_BIOS:qemuloongarch64 = "QEMU_EFI.fd"
 EXTRA_IMAGEDEPENDS:remove:qemuloongarch64 = "u-boot"
