@@ -1,5 +1,5 @@
-FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend:loongarch64 := "${THISDIR}/files:"
 
-OPENEULER_KERNEL_CONFIG = "file://loongson3_defconfig"
+OPENEULER_KERNEL_CONFIG:loongarch64 = "file://loongson3_defconfig"
 
-COMPATIBLE_MACHINE = "qemuloongarch64"
+COMPATIBLE_MACHINE:loongarch64 = "qemuloongarch64"
