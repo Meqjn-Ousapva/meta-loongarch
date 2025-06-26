@@ -5,7 +5,7 @@ SECTION = "console/utils"
 LICENSE = "LGPL-2.1-or-later & GPL-2.0-or-later"
 LIC_FILES_CHKSUM = "file://COPYING;md5=1efaf30bb0084b4a17a6f55f9cbcd25b"
 
-SRC_URI = "file://strace-${PV}.tar.xz"
+SRC_URI = " file://strace-${PV}.tar.xz "
 
 inherit autotools ptest
 
