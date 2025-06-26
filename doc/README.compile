@@ -4,6 +4,8 @@ cd yoctoproject
 
 2. 拉取poky 和 本仓库
 git clone git://git.yoctoproject.org/poky
+git clone https://github.com/Meqjn-Ousapva/meta-loongarch.git
+or
 git clone https://gitee.com/meqjn_ousapva/meta-loongarch.git
 
 3. poky 与 本仓库 设置在相同分支上，比如 nanbield/kirkstone
