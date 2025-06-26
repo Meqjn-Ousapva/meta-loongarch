@@ -1,0 +1,18 @@
+README.compile 中使用了两层（poky、meta-loongarch）来编译。现在 openembedded 引入第三层 meta-openembedded
+于是，在README.compile 基础上做以下操作
+
+1. 在 yoctoproject 目录下拉取 meta-openembedded
+git clone git://git.openembedded.org/meta-openembedded
+
+2. poky meta-openembedded 设置在同一分支上（kirkstone），meta-loongarch 设置在 kirkstone-oe
+cd ~/yoctoproject/poky
+checkout kirkstone
+cd ~/yoctoproject/meta-openembedded
+checkout kirkstone
+cd ~/yoctoproject/meta-loongarch
+checkout kirkstone-oe
+
+3. 参考 meta-loongarch/config 中 bblayers.conf.sample local.conf.sample
+修改 build/conf 中 bblayers.conf local.conf
+
+4. 再次运行 `bitbake core-image-minimal`
