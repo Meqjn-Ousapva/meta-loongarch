@@ -1,0 +1,43 @@
+1. 准备工作目录 yoctoproject 并进入
+mkdir ~/yoctoproject
+cd yoctoproject
+
+2. 拉取poky 和 本仓库
+git clone git://git.yoctoproject.org/poky
+git clone https://gitee.com/meqjn_ousapva/meta-loongarch.git
+
+3. poky 与 本仓库 设置在相同分支上，比如 nanbield/kirkstone
+cd ~/yoctoproject/poky
+checkout nanbield
+cd ~/yoctoproject/meta-loongarch
+checkout nanbield
+
+4. 进入 poky 仓库运行 `source oe-init-build-env ../build`
+会自动进入到  ~/yoctoproject/build 目录下
+
+5. 添加 meta-loongarch 路径到 conf/bblayers.conf
+打开 conf/bblayers.conf 将 meta-loongarch 仓库路径添加在最前面
+（添加到最前面可以保证bbclass被覆盖）
+```
+# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+POKY_BBLAYERS_CONF_VERSION = "2"
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+BBLAYERS ?= " \
+  /home/meqjn/yoctoproject/meta-loongarch \
+  /home/meqjn/yoctoproject/poky/meta \
+  /home/meqjn/yoctoproject/poky/meta-poky \
+  /home/meqjn/yoctoproject/poky/meta-yocto-bsp \
+  "
+```
+
+6. 将 meta-loongarch 下的 config/local.conf.sample 替换 build 下 config/local.conf
+cp ~/yoctoproject/meta-loongarch/config/local.conf.sample ~/yoctoproject/build/config/local.conf
+
+7. 在 build 目录下运行 `bitbake core-image-minimal` 
+
+8. 结束后在 tmp/deploy/images/qemuloongarch64/ 下看到生成的 rootfs.tar.bz2
+
