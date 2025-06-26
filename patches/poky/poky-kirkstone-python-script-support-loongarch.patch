@@ -1,0 +1,48 @@
+From d5c52a385cc28b4116fb8b2c10354d5285c1cd56 Mon Sep 17 00:00:00 2001
+From: Meqjn <meqjn_ousapva@outlook.com>
+Date: Sun, 22 Jun 2025 11:52:09 +0800
+Subject: [PATCH] python script: meta/lib/oe: elf.py
+ package_manager/__init__.py: Add loongarch support
+
+---
+ meta/lib/oe/elf.py                      | 2 ++
+ meta/lib/oe/package_manager/__init__.py | 3 ++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/meta/lib/oe/elf.py b/meta/lib/oe/elf.py
+index 46c884a775..5a839bdacc 100644
+--- a/meta/lib/oe/elf.py
++++ b/meta/lib/oe/elf.py
+@@ -19,6 +19,7 @@ def machine_dict(d):
+                         "x86_64":     (62,     0,    0,          True,          64),
+                         "epiphany":   (4643,   0,    0,          True,          32),
+                         "lm32":       (138,    0,    0,          False,         32),
++                        "loongarch64":(258,    0,    0,          True,          64),
+                         "mips":       ( 8,     0,    0,          False,         32),
+                         "mipsel":     ( 8,     0,    0,          True,          32),
+                         "microblaze":  (189,   0,    0,          False,         32),
+@@ -43,6 +44,7 @@ def machine_dict(d):
+                         "ia64":       (50,     0,    0,          True,          64),
+                         "alpha":      (36902,  0,    0,          True,          64),
+                         "hppa":       (15,     3,    0,          False,         32),
++                        "loongarch64":(258,    0,    0,          True,          64),
+                         "m68k":       ( 4,     0,    0,          False,         32),
+                         "mips":       ( 8,     0,    0,          False,         32),
+                         "mipsel":     ( 8,     0,    0,          True,          32),
+diff --git a/meta/lib/oe/package_manager/__init__.py b/meta/lib/oe/package_manager/__init__.py
+index 6615258470..3d94414548 100644
+--- a/meta/lib/oe/package_manager/__init__.py
++++ b/meta/lib/oe/package_manager/__init__.py
+@@ -120,7 +120,8 @@ def generate_locale_archive(d, rootfs, target_arch, localedir):
+         "riscv32": ["--uint32-align=4", "--little-endian"],
+         "i586": ["--uint32-align=4", "--little-endian"],
+         "i686": ["--uint32-align=4", "--little-endian"],
+-        "x86_64": ["--uint32-align=4", "--little-endian"]
++        "x86_64": ["--uint32-align=4", "--little-endian"],
++        "loongarch64": ["--uint32-align=4", "--little-endian"]
+     }
+     if target_arch in locale_arch_options:
+         arch_options = locale_arch_options[target_arch]
+-- 
+2.43.0
+

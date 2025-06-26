@@ -41,3 +41,6 @@ cp ~/yoctoproject/meta-loongarch/config/local.conf.sample ~/yoctoproject/build/c
 
 8. 结束后在 tmp/deploy/images/qemuloongarch64/ 下看到生成的 rootfs.tar.bz2
 
+## 注
+kirkstone 需要对 poky 打 patch
+参考 meta-loongarch/patches/README.patches
