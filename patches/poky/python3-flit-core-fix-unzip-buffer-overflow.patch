@@ -1,0 +1,13 @@
+diff --git a/meta/classes/python_pep517.bbclass b/meta/classes/python_pep517.bbclass
+index 34ffdc9c0d..6ed6aed933 100644
+--- a/meta/classes/python_pep517.bbclass
++++ b/meta/classes/python_pep517.bbclass
+@@ -50,7 +50,7 @@ python_pep517_do_install () {
+ # A manual do_install that just uses unzip for bootstrapping purposes. Callers should DEPEND on unzip-native.
+ python_pep517_do_bootstrap_install () {
+     install -d ${D}${PYTHON_SITEPACKAGES_DIR}
+-    unzip -d ${D}${PYTHON_SITEPACKAGES_DIR} ${PEP517_WHEEL_PATH}/*.whl
++    /usr/local/bin/ripunzip unzip-file ${PEP517_WHEEL_PATH}/*.whl -d ${D}${PYTHON_SITEPACKAGES_DIR}
+ }
+ 
+ EXPORT_FUNCTIONS do_configure do_compile do_install

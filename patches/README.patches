@@ -3,4 +3,11 @@ poky kirkstone 分支对 loongarch 支持
 由于不是 bbclass bb bbappend 文件，所以没有归纳到 meta-loongarch 中，
 需要将该patch另外打到 poky kirkstone 分支上
 
+# poky/python3-flit-core-fix-unzip-buffer-overflow.patch
+在 wsl-ubuntu24.04 上 unzip 会出现 buffer overflow 的情况
+可以选择使用 rust unzip 工具 (ripunzip) 规避该问题
+需要先用 cargo 安装 ripunzip，并且要使用绝对路径，比如 /usr/local/bin/ripunzip
+
+# openeuler/*.patch
+openeuler 下部分在 meta 中修改不生效，暂时用 patch 方式代替
 

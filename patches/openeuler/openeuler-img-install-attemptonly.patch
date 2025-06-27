@@ -1,0 +1,11 @@
+diff --git a/meta-openeuler/recipes-core/images/openeuler-image-common.inc b/meta-openeuler/recipes-core/images/openeuler-image-common.inc
+index b4a5e7e0758..cd662982c23 100644
+--- a/meta-openeuler/recipes-core/images/openeuler-image-common.inc
++++ b/meta-openeuler/recipes-core/images/openeuler-image-common.inc
+@@ -1,5 +1,5 @@
+ # openeuler standard image packages
+-IMAGE_INSTALL = " \
++IMAGE_INSTALL_ATTEMPTONLY = " \
+ packagegroup-core-boot \
+ packagegroup-core-base-utils \
+ packagegroup-core-tools-debug \

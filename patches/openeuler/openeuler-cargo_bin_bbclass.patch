@@ -1,0 +1,13 @@
+diff --git a/meta-openeuler/classes/cargo_bin.bbclass b/meta-openeuler/classes/cargo_bin.bbclass
+index 3062695c2e1..eba3aa7336c 100644
+--- a/meta-openeuler/classes/cargo_bin.bbclass
++++ b/meta-openeuler/classes/cargo_bin.bbclass
+@@ -304,6 +304,8 @@ def rust_target(d, spec_type):
+                 callconvention += "eabi"
+     elif arch in ["aarch64"]:
+         arch = "aarch64"
++    elif arch in ["loongarch64"]:
++        arch = "loongarch64"
+     else:
+         bb.fatal("Unknown or unsupported architecture: %s" % arch)
+ 
