@@ -5,8 +5,7 @@
 # be set in this file. More adventurous users can look at
 # local.conf.sample.extended which contains other examples of configuration which
 # can be placed in this file but new users likely won't need any of them
-# initially. There's also site.conf.sample which contains examples of site specific
-# information such as proxy server addresses.
+# initially.
 #
 # Lines starting with the '#' character are commented out and in some cases the
 # default values are provided as comments to show people example syntax. Enabling
@@ -27,7 +26,7 @@
 #MACHINE ?= "qemux86"
 #MACHINE ?= "qemux86-64"
 #
-# There are also the following hardware board target machines included for 
+# There are also the following hardware board target machines included for
 # demonstration purposes:
 #
 #MACHINE ?= "beaglebone-yocto"
@@ -36,11 +35,7 @@
 #MACHINE ?= "edgerouter"
 #
 # This sets the default machine to be qemux86-64 if no other machine is selected:
-MACHINE ??= "qemux86-64"
-
-# These are some of the more commonly used values. Looking at the files in the
-# meta/conf/machine directory, or the conf/machine directory of any additional layers
-# you add in will show all the available machines.
+MACHINE ??= "qemu-aarch64"
 
 #
 # Where to place downloads
@@ -88,12 +83,12 @@ MACHINE ??= "qemux86-64"
 #
 # The distribution setting controls which policy settings are used as defaults.
 # The default value is fine for general Yocto project use, at least initially.
-# Ultimately when creating custom policy, people will likely end up subclassing 
+# Ultimately when creating custom policy, people will likely end up subclassing
 # these defaults.
 #
 DISTRO ?= "openeuler"
 # As an example of a subclass there is a "bleeding" edge policy configuration
-# where many versions are set to the absolute latest code from the upstream 
+# where many versions are set to the absolute latest code from the upstream
 # source control systems. This is just mentioned here as an example, its not
 # useful to most new users.
 # DISTRO ?= "poky-bleeding"
@@ -109,7 +104,7 @@ DISTRO ?= "openeuler"
 #  - 'package_ipk' for ipk files are used by opkg (a debian style embedded package manager)
 #  - 'package_rpm' for rpm style packages
 # E.g.: PACKAGE_CLASSES ?= "package_rpm package_deb package_ipk"
-# OE-Core defaults to ipkg, whilst Poky defaults to rpm:
+# We default to rpm:
 # PACKAGE_CLASSES ?= "package_rpm"
 
 #
@@ -243,7 +238,7 @@ BB_DISKMON_DIRS ??= "\
 # By default native qemu will build with a builtin VNC server where graphical output can be
 # seen. The line below enables the SDL UI frontend too.
 PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
-# By default libsdl2-native will be built, if you want to use your host's libSDL instead of 
+# By default libsdl2-native will be built, if you want to use your host's libSDL instead of
 # the minimal libsdl built by libsdl2-native then uncomment the ASSUME_PROVIDED line below.
 #ASSUME_PROVIDED += "libsdl2-native"
 
@@ -280,29 +275,96 @@ PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
 # this doesn't mean anything to you.
 CONF_VERSION = "2"
 
+# use quilt as default patching tool, defined in bitbake.conf
+# if you want to modify, please set PATCHTOOL as follow:
+# PATCHTOOL = "patch"
+
 TCMODE = "external-openeuler"
 INHERIT:remove = "uninative"
 PATCHDEPENDENCY:remove = "patch-replacement-native:do_populate_sysroot"
+
+# openEuler software package dir
+# all openeEuler software packages will be downloaded by specific tool
+# into this dir with the following format:
+# <OPENEULER_SP_DIR>
+#      busybox
+#      openssh
+#      .....
 OPENEULER_SP_DIR  = "/home/meqjn/openeulerproject"
+
+# the sysroot of native sdk of openeuler which contains all the native tools
+# used for building openeuler
+#
 OPENEULER_PREBUILT_TOOLS_ENABLE = "no"
 OVERRIDES .= "${@['', ':openeuler-prebuilt']['${OPENEULER_PREBUILT_TOOLS_ENABLE}' == 'yes']}"
+
+# OPENEULER_NATIVESDK_SYSROOT points to the sysroot of prebuilt host tools
 OPENEULER_NATIVESDK_SYSROOT = "/opt/buildtools/nativesdk/sysroots/x86_64-openeulersdk-linux"
+
+# openEuler cross toolchain dir
+# prebuilt toolchain with c library is used to build openEuler embedded
+# distribution.  The prebuilt toolchain should be downloaded and placed in
+# EXTERNAL_TOOLCHAIN with the following format:
+# <EXTERNAL_TOOLCHAIN>
+#   openeuler_gcc_arm64le  <the toolchain of aarch64 provided by openEuler>
+#   openeuler_gcc_arm32le" <the toolchain of arm32 provided by openEuler>
+EXTERNAL_TOOLCHAIN_GCC:arm = "/opt/arm-gnu-toolchain-x86_64-arm-none-linux-gnueabihf"
+EXTERNAL_TOOLCHAIN_GCC:aarch64 = "/opt/openeuler_gcc_arm64le"
+#EXTERNAL_TOOLCHAIN_GCC:x86-64 = "/usr1/openeuler/gcc/openeuler_gcc_x86_64"
+#EXTERNAL_TOOLCHAIN_GCC:riscv64 = "/usr1/openeuler/gcc/openeuler_gcc_riscv64"
 EXTERNAL_TOOLCHAIN_GCC:loongarch64 = "/opt/openeuler-gcc-loongarch64"
+#EXTERNAL_TOOLCHAIN_LLVM = "/usr1/openeuler/llvm"
+EXTERNAL_TARGET_SYS:arm = "arm-none-linux-gnueabihf"
+EXTERNAL_TARGET_SYS:aarch64 = "aarch64-openeuler-linux-gnu"
+#EXTERNAL_TARGET_SYS:x86-64 = "x86_64-openeuler-linux-gnu"
+#EXTERNAL_TARGET_SYS:riscv64 = "riscv64-openeuler-linux-gnu"
 EXTERNAL_TARGET_SYS:loongarch64 = "loongarch64-openeuler-linux-gnu"
 EXTERNAL_TOOLCHAIN ?= "${EXTERNAL_TOOLCHAIN_GCC}"
+
+
+# add openeuler security flags
 require conf/distro/include/security_flags.inc
 require conf/distro/include/security_flags_openeuler.inc
+
+# OE-built toolchains assume en_US is utf8
 EXTERNAL_TOOLCHAIN_FEATURES_DEFAULT = "locale-utf8-is-default"
+
+# manifest is base line for building openEuler Embedded image
 MANIFEST_DIR ?= "${OPENEULER_SP_DIR}/yocto-meta-openeuler/.oebuild/manifest.yaml"
 MAPLIST_DIR ?= "${OPENEULER_SP_DIR}/yocto-meta-openeuler/.oebuild/maplist.yaml"
+
+# After the update of GCC, it aligns the data segment by MAXPAGESIZE
+# rather than COMMONPAGESIZE. In a lot of 64 bit architecture, the
+# MAXPAGESIZE is much larger than 4KB. For example, in aarch64
+# MAXPAGESIZE is equal to 64KB. As a result, the padding will be much
+# larger than before, which enlarge the binary.
+#
+# Under embedded scenario, the memory is limited. Even though larger
+# page size brings better performance, we should choose keeping the page
+# size to be 4KB to better utilize the memory space.
+#
+# After applying this limitation, the rootfs can be shrinked by 13.33%
+# for the openeuler-image.
+#
+# WARNING: since we limit the MAXPAGESIZE to be 4KB, if the user
+# manually change the page size in kernel config to be 64KB, the binary
+# cannot be run normally.
+#
+# For more info, see the following link:
+# https://gitee.com/openeuler/yocto-meta-openeuler/issues/IA4BRS?from=project-issue
+#
+#LDFLAGS += " -Wl,-zmax-page-size=0x1000 "
+
+#===========the content is user added==================
+MACHINE = "qemuloongarch64"
+DISTRO_FEATURES:append = " kernel6 "
 
 PREFERRED_VERSION_ldconfig-native = "2.12.1"
 PREFERRED_VERSION_linux-libc-headers = "6.5"
 PREFERRED_VERSION_qemu-native = "8.1.4"
 PREFERRED_PROVIDER_virtual/kernel = "linux-openeuler"
+BBMASK = "strace_%.bbappend"
 
-MACHINE = "qemuloongarch64"
-DISTRO_FEATURES:append = " kernel6 "
 #IMAGE_INSTALL:append = " edk2-loongarch"
 #IMAGE_INSTALL:append = " ldd elfutils"
 KERNEL_IMAGETYPE:qemuloongarch64 = "vmlinux.efi"
