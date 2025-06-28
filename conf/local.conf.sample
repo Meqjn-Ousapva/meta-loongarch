@@ -363,7 +363,7 @@ PREFERRED_VERSION_ldconfig-native = "2.12.1"
 PREFERRED_VERSION_linux-libc-headers = "6.5"
 PREFERRED_VERSION_qemu-native = "8.1.4"
 PREFERRED_PROVIDER_virtual/kernel = "linux-openeuler"
-BBMASK = "strace_%.bbappend"
+BBMASK = "strace_%.bbappend|liburcu_%.bbappend"
 
 #IMAGE_INSTALL:append = " edk2-loongarch"
 #IMAGE_INSTALL:append = " ldd elfutils"
