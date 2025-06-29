@@ -7,11 +7,11 @@ BBFILES ?= ""
 
 BBLAYERS ?= " \
   /home/meqjn/yoctoproject/meta-loongarch-openeuler \
-  /home/meqjn/yoctoproject/poky-kirkstone/meta \
-  /home/meqjn/yoctoproject/meta-openembedded-kirkstone/meta-oe \
-  /home/meqjn/yoctoproject/meta-openembedded-kirkstone/meta-python \
-  /home/meqjn/yoctoproject/meta-openembedded-kirkstone/meta-networking \
-  /home/meqjn/yoctoproject/meta-openembedded-kirkstone/meta-filesystems \
+  /home/meqjn/openeulerproject/yocto-poky/meta \
+  /home/meqjn/openeulerproject/yocto-meta-openembedded/meta-oe \
+  /home/meqjn/openeulerproject/yocto-meta-openembedded/meta-python \
+  /home/meqjn/openeulerproject/yocto-meta-openembedded/meta-networking \
+  /home/meqjn/openeulerproject/yocto-meta-openembedded/meta-filesystems \
   /home/meqjn/openeulerproject/yocto-meta-openeuler/meta-openeuler \
   /home/meqjn/openeulerproject/yocto-meta-openeuler/bsp/meta-openeuler-bsp \
   "
