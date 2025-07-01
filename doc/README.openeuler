@@ -1,0 +1,34 @@
+1. 准备工作目录 openeulerproject 并进入
+mkdir ~/openeulerproject
+cd openeulerproject
+
+2. 拉取 yocto-poky yocto-meta-openembedded yocto-mata-openeuler 和 本仓库
+git clone https://gitee.com/openeuler/yocto-poky.git
+git clone https://gitee.com/openeuler/yocto-meta-openembedded.git
+git clone https://gitee.com/openeuler/yocto-meta-openeuler.git
+git clone https://github.com/Meqjn-Ousapva/meta-loongarch.git yocto-meta-loongarch
+
+3. yocto-poky yocto-meta-openembedded checkout dev_kirkstone 分支
+
+4. yocto-meta-openeuler checkout da8b189cbf2 commit 上，该 commit 在 dev_kirkstone_4.0.26 之前（目前没在 dev_kirkstone_4.0.26 上测，先用该节点）
+
+5. yocto-meta-loongarch checkout kirkstone-openeuler 分支
+
+6. 打patch: 利用 yocto-meta-loongarch/patches 打补丁，详见 yocto-meta-loongarch/patches/README.patches
+
+7. 进入 yocto-poky 仓库运行 `source oe-init-build-env ../build`
+会自动进入到  ~/openeulerproject/build 目录下
+
+8. 利用 yocto-meta-loongarch/conf 下 bblayers.conf.sample local.conf.sample 修改 build/conf/bblayers.conf local.conf
+可以直接复制，然后修改相关路径
+bblayers.conf 修改相对简单
+local.conf 中要修改以下内容
+OPENEULER_SP_DIR = "<home-dir>/openeulerproject"
+EXTERNAL_TOOLCHAIN_GCC:loongarch64 = "/path/to/loongarch/toolchain"
+
+9. 在 build 目录下运行 `bitbake openeuler-image` 
+
+## 注
+部分包源码缺失，手动下载到 openeulerproject/<package-name> 路径中
+比如 qemu_8.1.4 缺失
+cd ~/openeulerproject/qemu && wget https://download.qemu.org/qemu-8.1.4.tar.xz
