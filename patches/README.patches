@@ -1,5 +1,10 @@
-# poky/poky-kirkstone-python-script-support-loongarch.patch
-poky kirkstone 分支对 loongarch 支持
+# poky-kirkstone-py-elf-init-support-loongarch.patch
+poky kirkstone 分支 elf init 对 loongarch 支持
+由于不是 bbclass bb bbappend 文件，所以没有归纳到 meta-loongarch 中，
+需要将该patch另外打到 poky kirkstone 分支上
+
+# poky-kirkstone-py-go-support-loongarch.patch
+poky kirkstone 分支 go 对 loongarch 支持
 由于不是 bbclass bb bbappend 文件，所以没有归纳到 meta-loongarch 中，
 需要将该patch另外打到 poky kirkstone 分支上
 

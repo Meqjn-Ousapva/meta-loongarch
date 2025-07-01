@@ -1,0 +1,11 @@
+diff --git a/meta/lib/oe/go.py b/meta/lib/oe/go.py
+index 9996057f12..dfd957d157 100644
+--- a/meta/lib/oe/go.py
++++ b/meta/lib/oe/go.py
+@@ -29,4 +29,6 @@ def map_arch(a):
+         return 'ppc64'
+     elif a == 'riscv64':
+         return 'riscv64'
++    elif a == 'loongarch64':
++        return 'loong64'
+     return ''
