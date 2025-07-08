@@ -1,9 +1,9 @@
-# poky-kirkstone-py-elf-init-support-loongarch.patch
+# poky/poky-kirkstone-py-elf-init-support-loongarch.patch
 poky kirkstone 分支 elf init 对 loongarch 支持
 由于不是 bbclass bb bbappend 文件，所以没有归纳到 meta-loongarch 中，
 需要将该patch另外打到 poky kirkstone 分支上
 
-# poky-kirkstone-py-go-support-loongarch.patch
+# poky/poky-kirkstone-py-go-support-loongarch.patch
 poky kirkstone 分支 go 对 loongarch 支持
 由于不是 bbclass bb bbappend 文件，所以没有归纳到 meta-loongarch 中，
 需要将该patch另外打到 poky kirkstone 分支上
@@ -13,6 +13,9 @@ poky kirkstone 分支 go 对 loongarch 支持
 可以选择使用 rust unzip 工具 (ripunzip) 规避该问题
 需要先用 cargo 安装 ripunzip，并且要使用绝对路径，比如 /usr/local/bin/ripunzip
 
-# openeuler/*.patch
-openeuler 下部分在 meta 中修改不生效，暂时用 patch 方式代替
+# openeuler/openeuler-cargo_bin_bbclass.patch
+cargo_bin.bbclass 无法在meta-loonagrch中覆盖，暂时用 patch 方式代替
+
+# openeuler/openeuler-img-install-attemptonly.patch
+最后 do_rootfs 时会有软链接创建失败的情况，所以可以改成 IMAGE_INSTALL_ATTEMPTONLY
 
