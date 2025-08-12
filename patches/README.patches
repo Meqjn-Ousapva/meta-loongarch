@@ -8,6 +8,9 @@ poky kirkstone 分支 go 对 loongarch 支持
 由于不是 bbclass bb bbappend 文件，所以没有归纳到 meta-loongarch 中，
 需要将该patch另外打到 poky kirkstone 分支上
 
+# poky-kirkstone-4.0.26-py-go-support-loongarch.patch
+poky kirkstone-4.0.26 分支 go 对 loongarch 支持
+
 # poky/python3-flit-core-fix-unzip-buffer-overflow.patch
 在 wsl-ubuntu24.04 上 unzip 会出现 buffer overflow 的情况
 可以选择使用 rust unzip 工具 (ripunzip) 规避该问题
