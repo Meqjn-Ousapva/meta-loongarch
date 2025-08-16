@@ -1,3 +1,8 @@
+#
+# Copyright OpenEmbedded Contributors
+#
+# SPDX-License-Identifier: MIT
+#
 
 # Right now this is focused on arm-specific tune features.
 # We get away with this for now as one can only use x86-64 as the build host
@@ -16,16 +21,18 @@ def llvm_features_from_tune(d):
 
     if 'vfpv4' in feat:
         f.append("+vfp4")
-    if 'vfpv3' in feat:
+    elif 'vfpv3' in feat:
         f.append("+vfp3")
-    if 'vfpv3d16' in feat:
-        f.append("+d16")
-
-    if 'vfpv2' in feat or 'vfp' in feat:
+    elif 'vfpv3d16' in feat:
+        f.append("+vfp3")
+        f.append("-d32")
+    elif 'vfpv2' in feat or 'vfp' in feat:
         f.append("+vfp2")
 
     if 'neon' in feat:
         f.append("+neon")
+    elif target_is_armv7(d):
+        f.append("-neon")
 
     if 'mips32' in feat:
         f.append("+mips32")
@@ -117,6 +124,7 @@ def llvm_features(d):
                     llvm_features_from_cc_arch(d) +
                     llvm_features_from_target_fpu(d))
 
+llvm_features[vardepvalue] = "${@llvm_features(d)}"
 
 ## arm-unknown-linux-gnueabihf
 DATA_LAYOUT[arm-eabi] = "e-m:e-p:32:32-i64:64-v128:64:128-a:0:32-n32-S64"
@@ -190,6 +198,13 @@ TARGET_POINTER_WIDTH[mips64] = "64"
 TARGET_C_INT_WIDTH[mips64] = "64"
 MAX_ATOMIC_WIDTH[mips64] = "64"
 
+## mips64-n32-unknown-linux-{gnu, musl}
+DATA_LAYOUT[mips64-n32] = "E-m:e-p:32:32-i8:8:32-i16:16:32-i64:64-n32:64-S128"
+TARGET_ENDIAN[mips64-n32] = "big"
+TARGET_POINTER_WIDTH[mips64-n32] = "32"
+TARGET_C_INT_WIDTH[mips64-n32] = "32"
+MAX_ATOMIC_WIDTH[mips64-n32] = "64"
+
 ## mips64el-unknown-linux-{gnu, musl}
 DATA_LAYOUT[mips64el] = "e-m:e-i8:8:32-i16:16:32-i64:64-n32:64-S128"
 TARGET_ENDIAN[mips64el] = "little"
@@ -218,19 +233,19 @@ TARGET_POINTER_WIDTH[powerpc64le] = "64"
 TARGET_C_INT_WIDTH[powerpc64le] = "64"
 MAX_ATOMIC_WIDTH[powerpc64le] = "64"
 
-## riscv32-unknown-linux-{gnu, musl}
-DATA_LAYOUT[riscv32] = "e-m:e-p:32:32-i64:64-n32-S128"
-TARGET_ENDIAN[riscv32] = "little"
-TARGET_POINTER_WIDTH[riscv32] = "32"
-TARGET_C_INT_WIDTH[riscv32] = "32"
-MAX_ATOMIC_WIDTH[riscv32] = "32"
+## riscv32gc-unknown-linux-{gnu, musl}
+DATA_LAYOUT[riscv32gc] = "e-m:e-p:32:32-i64:64-n32-S128"
+TARGET_ENDIAN[riscv32gc] = "little"
+TARGET_POINTER_WIDTH[riscv32gc] = "32"
+TARGET_C_INT_WIDTH[riscv32gc] = "32"
+MAX_ATOMIC_WIDTH[riscv32gc] = "32"
 
-## riscv64-unknown-linux-{gnu, musl}
-DATA_LAYOUT[riscv64] = "e-m:e-p:64:64-i64:64-i128:128-n64-S128"
-TARGET_ENDIAN[riscv64] = "little"
-TARGET_POINTER_WIDTH[riscv64] = "64"
-TARGET_C_INT_WIDTH[riscv64] = "64"
-MAX_ATOMIC_WIDTH[riscv64] = "64"
+## riscv64gc-unknown-linux-{gnu, musl}
+DATA_LAYOUT[riscv64gc] = "e-m:e-p:64:64-i64:64-i128:128-n64-S128"
+TARGET_ENDIAN[riscv64gc] = "little"
+TARGET_POINTER_WIDTH[riscv64gc] = "64"
+TARGET_C_INT_WIDTH[riscv64gc] = "64"
+MAX_ATOMIC_WIDTH[riscv64gc] = "64"
 
 ## loongarch64-unknown-linux-{gnu, musl}
 DATA_LAYOUT[loongarch64] = "e-m:e-i8:8:32-i16:16:32-i64:64-n32:64-S128"
@@ -239,12 +254,6 @@ TARGET_POINTER_WIDTH[loongarch64] = "64"
 TARGET_C_INT_WIDTH[loongarch64] = "32"
 MAX_ATOMIC_WIDTH[loongarch64] = "64"
 FEATURES[loongarch64] = "+d"
-
-def sys_for(d, thing):
-    return d.getVar('{}_SYS'.format(thing))
-
-def prefix_for(d, thing):
-    return d.getVar('{}_PREFIX'.format(thing))
 
 # Convert a normal arch (HOST_ARCH, TARGET_ARCH, BUILD_ARCH, etc) to something
 # rust's internals won't choke on.
@@ -259,8 +268,20 @@ def arch_to_rust_target_arch(arch):
         return "arm"
     elif arch == "powerpc64le":
         return "powerpc64"
+    elif arch == "riscv32gc":
+        return "riscv32"
+    elif arch == "riscv64gc":
+        return "riscv64"
     else:
         return arch
+
+# Convert a rust target string to a llvm-compatible triplet
+def rust_sys_to_llvm_target(sys):
+    if sys.startswith('riscv32gc-'):
+        return sys.replace('riscv32gc-', 'riscv32-', 1)
+    if sys.startswith('riscv64gc-'):
+        return sys.replace('riscv64gc-', 'riscv64-', 1)
+    return sys
 
 # generates our target CPU value
 def llvm_cpu(d):
@@ -273,14 +294,15 @@ def llvm_cpu(d):
     trans['x86-64'] = "x86-64"
     trans['i686'] = "i686"
     trans['i586'] = "i586"
-    trans['powerpc'] = "powerpc"
     trans['mips64'] = "mips64"
     trans['mips64el'] = "mips64"
+    trans['powerpc64le'] = "ppc64le"
+    trans['powerpc64'] = "ppc64"
     trans['riscv64'] = "generic-rv64"
     trans['riscv32'] = "generic-rv32"
     trans['loongarch64'] = "la464"
 
-    if target in ["mips", "mipsel"]:
+    if target in ["mips", "mipsel", "powerpc"]:
         feat = frozenset(d.getVar('TUNE_FEATURES').split())
         if "mips32r2" in feat:
             trans['mipsel'] = "mips32r2"
@@ -288,26 +310,39 @@ def llvm_cpu(d):
         elif "mips32" in feat:
             trans['mipsel'] = "mips32"
             trans['mips'] = "mips32"
+        elif "ppc7400" in feat:
+            trans['powerpc'] = "7400"
 
     try:
         return trans[cpu]
     except:
         return trans.get(target, "generic")
 
-TARGET_LLVM_CPU="${@llvm_cpu(d)}"
-TARGET_LLVM_FEATURES = "${@llvm_features(d)}"
+llvm_cpu[vardepvalue] = "${@llvm_cpu(d)}"
 
-# class-native implies TARGET=HOST, and TUNE_FEATURES only describes the real
-# (original) target.
-TARGET_LLVM_FEATURES:class-native = "${@','.join(llvm_features_from_cc_arch(d))}"
-
-def rust_gen_target(d, thing, wd, features, cpu, arch, abi=""):
+def rust_gen_target(d, thing, wd, arch):
     import json
-    sys = sys_for(d, thing)
-    prefix = prefix_for(d, thing)
 
-    if thing == "TARGET":
+    build_sys = d.getVar('BUILD_SYS')
+    target_sys = d.getVar('TARGET_SYS')
+
+    sys = d.getVar('{}_SYS'.format(thing))
+    prefix = d.getVar('{}_PREFIX'.format(thing))
+    rustsys = d.getVar('RUST_{}_SYS'.format(thing))
+
+    abi = None
+    cpu = "generic"
+    features = ""
+
+    # Need to apply the target tuning consitently, only if the triplet applies to the target
+    # and not in the native case
+    if sys == target_sys and sys != build_sys:
         abi = d.getVar('ABIEXTENSION')
+        cpu = llvm_cpu(d)
+        if bb.data.inherits_class('native', d):
+            features = ','.join(llvm_features_from_cc_arch(d))
+        else:
+            features = llvm_features(d) or ""
         # arm and armv7 have different targets in llvm
         if arch == "arm" and target_is_armv7(d):
             arch = 'armv7'
@@ -322,20 +357,21 @@ def rust_gen_target(d, thing, wd, features, cpu, arch, abi=""):
     features = features or d.getVarFlag('FEATURES', arch_abi) or ""
     features = features.strip()
 
-    llvm_target = d.getVar('RUST_TARGET_SYS')
-    if thing == "BUILD":
-        llvm_target = d.getVar('RUST_HOST_SYS')
-
     # build tspec
     tspec = {}
-    tspec['llvm-target'] = llvm_target
+    tspec['llvm-target'] = rust_sys_to_llvm_target(rustsys)
     tspec['data-layout'] = d.getVarFlag('DATA_LAYOUT', arch_abi)
+    if tspec['data-layout'] is None:
+        bb.fatal("No rust target defined for %s" % arch_abi)
     tspec['max-atomic-width'] = int(d.getVarFlag('MAX_ATOMIC_WIDTH', arch_abi))
     tspec['target-pointer-width'] = d.getVarFlag('TARGET_POINTER_WIDTH', arch_abi)
     tspec['target-c-int-width'] = d.getVarFlag('TARGET_C_INT_WIDTH', arch_abi)
     tspec['target-endian'] = d.getVarFlag('TARGET_ENDIAN', arch_abi)
     tspec['arch'] = arch_to_rust_target_arch(rust_arch)
-    tspec['os'] = "linux"
+    if "baremetal" in d.getVar('TCLIBC'):
+        tspec['os'] = "none"
+    else:
+        tspec['os'] = "linux"
     if "musl" in tspec['llvm-target']:
         tspec['env'] = "musl"
     else:
@@ -346,7 +382,6 @@ def rust_gen_target(d, thing, wd, features, cpu, arch, abi=""):
         tspec['llvm-abiname'] = "ilp32d"
     if "loongarch64" in tspec['llvm-target']:
         tspec['llvm-abiname'] = "lp64d"
-
     tspec['vendor'] = "unknown"
     tspec['target-family'] = "unix"
     tspec['linker'] = "{}{}gcc".format(d.getVar('CCACHE'), prefix)
@@ -358,25 +393,45 @@ def rust_gen_target(d, thing, wd, features, cpu, arch, abi=""):
     tspec['linker-is-gnu'] = True
     tspec['linker-flavor'] = "gcc"
     tspec['has-rpath'] = True
-    tspec['has-elf-tls'] = True
     tspec['position-independent-executables'] = True
     tspec['panic-strategy'] = d.getVar("RUST_PANIC_STRATEGY")
 
     # write out the target spec json file
-    with open(wd + sys + '.json', 'w') as f:
+    with open(wd + rustsys + '.json', 'w') as f:
         json.dump(tspec, f, indent=4)
 
 # These are accounted for in tmpdir path names so don't need to be in the task sig
-rust_gen_target[vardepsexclude] += "RUST_HOST_SYS RUST_TARGET_SYS"
+rust_gen_target[vardepsexclude] += "ABIEXTENSION llvm_cpu"
 
 do_rust_gen_targets[vardeps] += "DATA_LAYOUT TARGET_ENDIAN TARGET_POINTER_WIDTH TARGET_C_INT_WIDTH MAX_ATOMIC_WIDTH FEATURES"
 
+RUST_TARGETS_DIR = "${WORKDIR}/rust-targets/"
+export RUST_TARGET_PATH = "${RUST_TARGETS_DIR}"
+
 python do_rust_gen_targets () {
-    wd = d.getVar('WORKDIR') + '/targets/'
-    build_arch = d.getVar('BUILD_ARCH')
-    rust_gen_target(d, 'BUILD', wd, "", "generic", build_arch)
+    wd = d.getVar('RUST_TARGETS_DIR')
+    # Order of BUILD, HOST, TARGET is important in case the files overwrite, most specific last
+    rust_gen_target(d, 'BUILD', wd, d.getVar('BUILD_ARCH'))
+    rust_gen_target(d, 'HOST', wd, d.getVar('HOST_ARCH'))
+    rust_gen_target(d, 'TARGET', wd, d.getVar('TARGET_ARCH'))
 }
 
 addtask rust_gen_targets after do_patch before do_compile
-do_rust_gen_targets[dirs] += "${WORKDIR}/targets"
+do_rust_gen_targets[dirs] += "${RUST_TARGETS_DIR}"
 
+# For building target C dependecies use only compiler parameters defined in OE
+# and ignore the CC crate defaults which conflicts with OE ones in some cases.
+# https://github.com/rust-lang/cc-rs#external-configuration-via-environment-variables
+# Some CC crate compiler flags are still required.
+# We apply them conditionally in rust wrappers.
+
+CRATE_CC_FLAGS:class-native = ""
+CRATE_CC_FLAGS:class-nativesdk = ""
+CRATE_CC_FLAGS:class-target = " -ffunction-sections -fdata-sections -fPIC"
+
+do_compile:prepend:class-target() {
+    export CRATE_CC_NO_DEFAULTS=1
+}
+do_install:prepend:class-target() {
+    export CRATE_CC_NO_DEFAULTS=1
+}
